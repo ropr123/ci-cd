@@ -30,7 +30,7 @@ jobs:
           mkdir -p data model reports
 
       - name: Prepare Data
-        run: python modelling/data_prep.py
+        run: python scripts/data_prep.py
 
       - name: Train Model
         run: python modelling/train_model.py
