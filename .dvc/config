@@ -2,4 +2,3 @@
     remote = gcsremote
 ['remote "gcsremote"']
     url = gs://ai-chain-supply-gcp-bucket
-    credentialpath = /Users/rohitprabhu/Model Training/key.json
