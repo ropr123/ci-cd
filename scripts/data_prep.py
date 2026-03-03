@@ -15,7 +15,7 @@ print(f"Reading data from {data_path}")
 df = pd.read_parquet(data_path)
 
 # Data specific configuration based on schema inspection
-time_col = 'Date'
+time_col = 'as_of_date'
 target_col = 'y'
 categorical_cols = ['Weather Condition', 'Seasonality']
 

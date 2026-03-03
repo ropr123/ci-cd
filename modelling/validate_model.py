@@ -18,6 +18,7 @@ df = pd.read_csv(val_path)
 
 # Identify target column
 target_col = next((col for col in ['value', 'target', 'price'] if col in df.columns), df.columns[-1])
+time_col = 'as_of_date' # Added time_col as per instruction
 dropped_cols = [target_col] + [col for col in df.columns if 'time' in col.lower() or 'date' in col.lower()]
 
 X = df.drop(columns=dropped_cols, errors='ignore')

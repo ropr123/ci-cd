@@ -23,7 +23,7 @@ df = pd.read_csv(test_path)
 
 # Data specific configuration
 target_col = 'y'
-time_col = 'Date'
+time_col = 'as_of_date'
 categorical_cols = ['Weather Condition', 'Seasonality']
 
 # Re-convert categorical columns
