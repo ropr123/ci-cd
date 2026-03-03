@@ -3,5 +3,5 @@ joblib
 scikit-learn
 requests
 python-dotenv
-dvc[gcs]
+dvc[gs]
 gcsfs
