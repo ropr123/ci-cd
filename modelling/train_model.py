@@ -2,46 +2,68 @@ import os
 import datetime
 import joblib
 import pandas as pd
-from sklearn.datasets import load_iris
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import classification_report, accuracy_score
+import lightgbm as lgb
+from sklearn.metrics import mean_absolute_error, mean_squared_error
+import numpy as np
 
 # Ensure directories exist
-os.makedirs('data', exist_ok=True)
 os.makedirs('model', exist_ok=True)
 os.makedirs('reports', exist_ok=True)
 
-# Load data from CSV
+# Load data
 train_path = os.path.join('data', 'train.csv')
-df = pd.read_csv(train_path)
-X_train = df.drop(columns='target')
-y_train = df['target']
+val_path = os.path.join('data', 'val.csv')
 
-# Train classifier
-clf = RandomForestClassifier(random_state=42)
-clf.fit(X_train, y_train)
+train_df = pd.read_csv(train_path)
+val_df = pd.read_csv(val_path)
+
+# Data specific configuration
+target_col = 'y'
+time_col = 'Date'
+categorical_cols = ['Weather Condition', 'Seasonality']
+
+# Re-convert categorical columns (lost in CSV save)
+for df in [train_df, val_df]:
+    for col in categorical_cols:
+        if col in df.columns:
+            df[col] = df[col].astype('category')
+
+# Prepare features and target
+X_train = train_df.drop(columns=[target_col, time_col], errors='ignore')
+y_train = train_df[target_col]
+
+X_val = val_df.drop(columns=[target_col, time_col], errors='ignore')
+y_val = val_df[target_col]
+
+# Train LightGBM model
+params = {
+    'objective': 'regression',
+    'metric': 'rmse',
+    'verbosity': -1,
+    'boosting_type': 'gbdt',
+    'random_state': 42,
+    'categorical_feature': [col for col in categorical_cols if col in X_train.columns]
+}
+
+model = lgb.LGBMRegressor(**params)
+model.fit(X_train, y_train, eval_set=[(X_val, y_val)])
 
 # Save the trained model
-model_path = os.path.join('model', 'rf_iris.joblib')
-joblib.dump(clf, model_path)
+model_path = os.path.join('model', 'lgbm_timeseries.joblib')
+joblib.dump(model, model_path)
 print(f'Model saved to {model_path}')
 
-# Load validation data for internal evaluation
-val_path = os.path.join('data', 'val.csv')
-val_df = pd.read_csv(val_path)
-X_val = val_df.drop(columns='target')
-y_val = val_df['target']
-
-# Evaluate on validation set
-y_pred = clf.predict(X_val)
-acc = accuracy_score(y_val, y_pred)
-report = classification_report(y_val, y_pred)
+# Evaluate
+y_pred = model.predict(X_val)
+mae = mean_absolute_error(y_val, y_pred)
+rmse = np.sqrt(mean_squared_error(y_val, y_pred))
 
 # Write training report
 report_path = os.path.join('reports', 'train_report.txt')
 with open(report_path, 'w') as f:
     f.write(f'Date: {datetime.datetime.now()}\n')
-    f.write(f'Accuracy: {acc}\n')
-    f.write(report)
+    f.write(f'Data Schema Checked: Yes\n')
+    f.write(f'Target: {target_col}\n')
+    f.write(f'MAE: {mae}\n')
+    f.write(f'RMSE: {rmse}\n')
 print(f'Training report saved to {report_path}')

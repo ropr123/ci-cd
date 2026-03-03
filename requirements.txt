@@ -5,3 +5,5 @@ requests
 python-dotenv
 dvc[gs]
 gcsfs
+lightgbm
+pyarrow
