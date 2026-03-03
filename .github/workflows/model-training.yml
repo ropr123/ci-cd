@@ -37,8 +37,7 @@ jobs:
           mkdir -p data model reports
 
       - name: Pull data from DVC
-        run: |
-          dvc pull -r gcsremote
+        run: dvc pull
         env:
           GOOGLE_APPLICATION_CREDENTIALS: key.json
 
