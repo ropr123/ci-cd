@@ -24,12 +24,14 @@ df = pd.read_csv(test_path)
 # Data specific configuration
 target_col = 'y'
 time_col = 'as_of_date'
-categorical_cols = ['Weather Condition', 'Seasonality']
 
 # Re-convert categorical columns
+categorical_cols = df.select_dtypes(include=['object']).columns.tolist()
+if target_col in categorical_cols: categorical_cols.remove(target_col)
+if time_col in categorical_cols: categorical_cols.remove(time_col)
+
 for col in categorical_cols:
-    if col in df.columns:
-        df[col] = df[col].astype('category')
+    df[col] = df[col].astype('category')
 
 X_test = df.drop(columns=[target_col, time_col], errors='ignore')
 y_test = df[target_col]

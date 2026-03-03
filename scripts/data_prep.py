@@ -17,16 +17,18 @@ df = pd.read_parquet(data_path)
 # Data specific configuration based on schema inspection
 time_col = 'as_of_date'
 target_col = 'y'
-categorical_cols = ['Weather Condition', 'Seasonality']
 
 # Feature Engineering for Time Series
 df[time_col] = pd.to_datetime(df[time_col])
 df = df.sort_values(time_col)
 
-# Convert categorical objects to category type for LightGBM
+# Convert ALL object columns to category type for LightGBM
+# This handles Store ID, Product ID, series_id, created_at, etc.
+categorical_cols = df.select_dtypes(include=['object']).columns.tolist()
+print(f"Converting these columns to category: {categorical_cols}")
+
 for col in categorical_cols:
-    if col in df.columns:
-        df[col] = df[col].astype('category')
+    df[col] = df[col].astype('category')
 
 # Drop rows with NaN if any (especially from lags already in the data)
 df = df.dropna(subset=[target_col])
