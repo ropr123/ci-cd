@@ -1,4 +1,5 @@
 [core]
     remote = gcsremote
-[remote "gcsremote"]
-    url = gs://ropr-mlops-data/data
+['remote "gcsremote"']
+    url = gs://ai-chain-supply-gcp-bucket
+    credentialpath = ../key.json
