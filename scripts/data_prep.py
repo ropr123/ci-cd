@@ -1,14 +1,17 @@
 import os
 import pandas as pd
-from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
 
 # Ensure directories exist
 os.makedirs('data', exist_ok=True)
 
-# Load iris dataset
-iris = load_iris(as_frame=True)
-df = iris.frame
+# Load data from DVC-managed CSV
+data_path = 'data/iris.csv'
+if not os.path.exists(data_path):
+    print(f"Error: {data_path} not found. Ensure 'dvc pull' was successful.")
+    exit(1)
+
+df = pd.read_csv(data_path)
 
 # First split: train+val and test (20% for test)
 train_val_df, test_df = train_test_split(df, test_size=0.2, random_state=42)
