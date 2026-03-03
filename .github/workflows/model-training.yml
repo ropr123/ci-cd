@@ -3,6 +3,8 @@ name: Model Training Workflow
 on:
   push:
     branches: [ master ]
+    paths:
+      - 'data/**'
   pull_request:
     branches: [ master ]
   workflow_dispatch:
