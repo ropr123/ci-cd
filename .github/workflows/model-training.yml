@@ -29,8 +29,8 @@ jobs:
 
       - name: Authenticate with GCP
         run: |
-          echo "${{ secrets.GCP_SA_KEY }}" > key.json
-          export GOOGLE_APPLICATION_CREDENTIALS=$(pwd)/key.json
+          echo "${{ secrets.GCP_SA_KEY }}" > ${{ github.workspace }}/key.json
+          echo "GOOGLE_APPLICATION_CREDENTIALS=${{ github.workspace }}/key.json" >> $GITHUB_ENV
 
       - name: Create necessary folders
         run: |
@@ -38,8 +38,6 @@ jobs:
 
       - name: Pull data from DVC
         run: dvc pull
-        env:
-          GOOGLE_APPLICATION_CREDENTIALS: key.json
 
       - name: Prepare Data
         run: python scripts/data_prep.py
