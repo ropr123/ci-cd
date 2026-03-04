@@ -6,7 +6,7 @@ import numpy as np
 os.makedirs('data', exist_ok=True)
 
 # Load data from Parquet
-data_path = 'data/data.parquet'
+data_path = 'data/features.parquet'
 if not os.path.exists(data_path):
     print(f"Error: {data_path} not found.")
     exit(1)
