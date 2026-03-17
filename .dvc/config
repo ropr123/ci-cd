@@ -3,3 +3,4 @@
     remote = storage
 ['remote "storage"']
     url = gs://ai-chain-supply-gcp-bucket/dvc
+    credentialpath = /opt/airflow/gcp-key.json
